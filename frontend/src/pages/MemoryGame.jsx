@@ -295,7 +295,7 @@ export default function MemoryGame() {
       {/* Card Grid */}
       {cards.length > 0 && !loading && (
         <div className="mem-grid-wrap">
-          <div className="mem-grid" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+          <div className="mem-grid" style={{ "--mem-cols": cols }}>
             {cards.map(card => {
               const up  = isFaceUp(card.uid);
               const ok  = isMatch(card.uid);
