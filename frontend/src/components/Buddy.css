@@ -1,0 +1,414 @@
+/* ═══════════════════════════════════════════════════════
+   BUDDY.CSS  —  Full-body animated guide character
+   Inspired by Duolingo + CandyCrush + Tamagotchi energy
+═══════════════════════════════════════════════════════ */
+
+/* ── Wrapper ──────────────────────────────────────────── */
+.buddy-wrap {
+  position: fixed;
+  bottom: 92px;
+  right: 14px;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ── Full body ────────────────────────────────────────── */
+.buddy-body {
+  position: relative;
+  width: 72px;
+  cursor: pointer;
+  pointer-events: all;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  -webkit-tap-highlight-color: transparent;
+  transform-origin: bottom center;
+}
+
+/* ── Avatar circle ────────────────────────────────────── */
+.buddy-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid rgba(255,255,255,0.28);
+  flex-shrink: 0;
+  transition: transform 0.2s var(--ease-spring, cubic-bezier(0.34,1.56,0.64,1));
+  z-index: 2;
+}
+.buddy-body:hover .buddy-avatar { transform: scale(1.1); }
+.buddy-body:active .buddy-avatar { transform: scale(0.93); }
+
+/* Face fills the avatar circle */
+.buddy-face {
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Emoji in corner */
+.buddy-emoji {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  font-size: 1.1rem;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
+  z-index: 3;
+}
+
+/* ── Notification dot ─────────────────────────────────── */
+.buddy-dot {
+  position: absolute;
+  top: -2px; right: -2px;
+  width: 14px; height: 14px;
+  background: #FF3D9A;
+  border-radius: 50%;
+  border: 2px solid #07050F;
+  animation: dotPop 0.4s var(--ease-spring, cubic-bezier(0.34,1.56,0.64,1));
+  z-index: 5;
+}
+
+/* ── Speaking ring pulse ──────────────────────────────── */
+.speak-ring {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2.5px solid var(--buddy-color, #8B5CF6);
+  animation: speakPulse 1s ease-in-out infinite;
+  z-index: 1;
+}
+
+/* ── Arms ─────────────────────────────────────────────── */
+.buddy-arm {
+  position: absolute;
+  top: 10px;
+  z-index: 1;
+  transition: all 0.35s var(--ease-spring, cubic-bezier(0.34,1.56,0.64,1));
+  pointer-events: none;
+}
+.buddy-arm.left  { left:  -26px; transform-origin: right center; }
+.buddy-arm.right { right: -26px; transform-origin: left center; }
+
+/* Wave animation */
+.buddy-arm.left.wave  { animation: waveLeft  0.7s ease-in-out; }
+.buddy-arm.right.wave { animation: waveRight 0.7s ease-in-out; }
+
+/* Point animation */
+.buddy-arm.left.point  { animation: pointLeft  0.4s var(--ease-spring, cubic-bezier(0.34,1.56,0.64,1)) forwards; }
+.buddy-arm.right.point { animation: pointRight 0.4s var(--ease-spring, cubic-bezier(0.34,1.56,0.64,1)) forwards; }
+
+/* ── Feet ─────────────────────────────────────────────── */
+.buddy-feet {
+  display: flex;
+  gap: 8px;
+  margin-top: 2px;
+  position: relative;
+  z-index: 2;
+}
+.foot {
+  width: 20px;
+  height: 11px;
+  border-radius: 50%;
+  opacity: 0.9;
+  transition: transform 0.2s ease;
+}
+.buddy-body.idle .foot:first-child { animation: footBobL 2.5s ease-in-out infinite; }
+.buddy-body.idle .foot:last-child  { animation: footBobR 2.5s ease-in-out infinite 0.3s; }
+
+/* ── Shadow ───────────────────────────────────────────── */
+.buddy-shadow {
+  width: 52px; height: 10px;
+  background: radial-gradient(ellipse, rgba(0,0,0,0.45) 0%, transparent 70%);
+  margin-top: -2px;
+  border-radius: 50%;
+  animation: shadowPulse 2.5s ease-in-out infinite;
+}
+
+/* ── Name label tooltip ───────────────────────────────── */
+.buddy-label {
+  position: absolute;
+  bottom: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-family: var(--f-body, 'Nunito', sans-serif);
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: white;
+  padding: 3px 9px;
+  border-radius: 99px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+  z-index: 10;
+}
+.buddy-body:hover .buddy-label { opacity: 1; }
+
+/* ── Speech bubble ────────────────────────────────────── */
+.buddy-bubble {
+  max-width: 228px;
+  background: #ffffff;
+  color: #1a0040;
+  border-radius: 20px 20px 6px 20px;
+  padding: 13px 16px 12px;
+  font-family: var(--f-body, 'Nunito', sans-serif);
+  font-size: 0.85rem;
+  font-weight: 800;
+  line-height: 1.5;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.2);
+  pointer-events: all;
+  position: relative;
+  animation: bubbleIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+  transform-origin: bottom right;
+}
+.buddy-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -9px; right: 22px;
+  width: 18px; height: 11px;
+  background: white;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+
+.buddy-msg { margin-bottom: 0; color: #1a0040; }
+
+/* ── Quick replies ────────────────────────────────────── */
+.buddy-replies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 10px;
+}
+.buddy-reply-btn {
+  font-family: var(--f-body, 'Nunito', sans-serif);
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 5px 11px;
+  border-radius: 99px;
+  border: 1.5px solid rgba(139,92,246,0.25);
+  background: rgba(139,92,246,0.08);
+  color: #1a0040;
+  cursor: pointer;
+  transition: transform 0.15s cubic-bezier(0.34,1.56,0.64,1), filter 0.15s, box-shadow 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.buddy-reply-btn:hover  { transform: scale(1.07); filter: brightness(1.05); }
+.buddy-reply-btn:active { transform: scale(0.94); }
+.buddy-reply-btn.primary { color: white; border-color: transparent; }
+.buddy-reply-btn.mic-btn {
+  background: rgba(255,61,154,0.1);
+  border-color: rgba(255,61,154,0.3);
+  color: #cc005e;
+}
+.buddy-reply-btn.mic-btn.listening {
+  background: #FF3D9A;
+  color: white;
+  border-color: transparent;
+  animation: micPulse 0.8s ease-in-out infinite;
+}
+
+/* ── Close button ─────────────────────────────────────── */
+.bubble-close {
+  position: absolute;
+  top: 7px; right: 9px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(0,0,0,0.28);
+  font-size: 0.82rem;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: color 0.15s;
+}
+.bubble-close:hover { color: rgba(0,0,0,0.6); }
+
+/* ── Typing dots ──────────────────────────────────────── */
+.buddy-typing {
+  display: flex; gap: 4px; align-items: center; padding: 4px 0;
+}
+.buddy-typing span {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #8B5CF6;
+  animation: typingDot 1.2s ease-in-out infinite;
+}
+.buddy-typing span:nth-child(2) { animation-delay: 0.2s; }
+.buddy-typing span:nth-child(3) { animation-delay: 0.4s; }
+
+/* ═══════════════════════════════════════════════════════
+   BODY ANIMATION STATES
+═══════════════════════════════════════════════════════ */
+
+/* IDLE — gentle bob */
+.buddy-body.idle {
+  animation: buddyIdle 2.8s ease-in-out infinite;
+}
+
+/* ENTER — drop in from above with bounce */
+.buddy-body.enter {
+  animation: buddyEnter 0.8s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+/* BOUNCE — happy jump */
+.buddy-body.bounce {
+  animation: buddyBounce 0.7s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+/* CELEBRATE — big spin jump */
+.buddy-body.celebrate {
+  animation: buddyCelebrate 0.9s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+/* SAD — slump */
+.buddy-body.sad {
+  animation: buddySad 0.6s ease;
+}
+
+/* WIGGLE — periodic attention getter */
+.buddy-body.wiggle {
+  animation: buddyWiggle 0.6s ease-in-out;
+}
+
+/* JUMP */
+.buddy-body.jump {
+  animation: buddyJump 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+/* ═══════════════════════════════════════════════════════
+   KEYFRAMES
+═══════════════════════════════════════════════════════ */
+@keyframes buddyIdle {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  25%     { transform: translateY(-7px) rotate(-2deg); }
+  75%     { transform: translateY(-4px) rotate(2deg); }
+}
+
+@keyframes buddyEnter {
+  0%   { transform: translateY(-120px) scale(0.4) rotate(20deg); opacity: 0; }
+  55%  { transform: translateY(8px) scale(1.1) rotate(-3deg); opacity: 1; }
+  75%  { transform: translateY(-4px) scale(0.97) rotate(1deg); }
+  100% { transform: translateY(0) scale(1) rotate(0); }
+}
+
+@keyframes buddyBounce {
+  0%,100% { transform: translateY(0) scale(1,1); }
+  30%     { transform: translateY(-20px) scale(0.95,1.1); }
+  55%     { transform: translateY(-8px) scale(1.05,0.96); }
+  75%     { transform: translateY(-14px) scale(0.97,1.04); }
+}
+
+@keyframes buddyCelebrate {
+  0%   { transform: translateY(0) rotate(0) scale(1); }
+  25%  { transform: translateY(-24px) rotate(-8deg) scale(1.1); }
+  50%  { transform: translateY(-18px) rotate(10deg) scale(1.15); }
+  75%  { transform: translateY(-10px) rotate(-4deg) scale(1.05); }
+  100% { transform: translateY(0) rotate(0) scale(1); }
+}
+
+@keyframes buddySad {
+  0%,100% { transform: rotate(0deg) translateY(0); }
+  20%     { transform: rotate(-6deg) translateY(2px); }
+  60%     { transform: rotate(6deg) translateY(2px); }
+}
+
+@keyframes buddyWiggle {
+  0%,100% { transform: rotate(0deg); }
+  20%     { transform: rotate(-10deg) scale(1.04); }
+  50%     { transform: rotate(10deg) scale(1.04); }
+  80%     { transform: rotate(-5deg); }
+}
+
+@keyframes buddyJump {
+  0%,100% { transform: translateY(0) scaleY(1) scaleX(1); }
+  15%     { transform: translateY(0) scaleY(0.8) scaleX(1.15); }
+  45%     { transform: translateY(-28px) scaleY(1.1) scaleX(0.93); }
+  70%     { transform: translateY(-14px) scaleY(1.05) scaleX(0.97); }
+  90%     { transform: translateY(0) scaleY(0.95) scaleX(1.05); }
+}
+
+@keyframes waveLeft {
+  0%,100% { transform: rotate(0deg); }
+  25%     { transform: rotate(-25deg); }
+  50%     { transform: rotate(15deg); }
+  75%     { transform: rotate(-20deg); }
+}
+
+@keyframes waveRight {
+  0%,100% { transform: rotate(0deg); }
+  25%     { transform: rotate(25deg); }
+  50%     { transform: rotate(-15deg); }
+  75%     { transform: rotate(20deg); }
+}
+
+@keyframes pointLeft {
+  to { transform: rotate(-30deg); }
+}
+
+@keyframes pointRight {
+  to { transform: rotate(30deg); }
+}
+
+@keyframes footBobL {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-3px) rotate(-4deg); }
+}
+
+@keyframes footBobR {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-3px) rotate(4deg); }
+}
+
+@keyframes shadowPulse {
+  0%,100% { transform: scaleX(1); opacity: 1; }
+  50%     { transform: scaleX(0.85); opacity: 0.6; }
+}
+
+@keyframes speakPulse {
+  0%,100% { transform: scale(1); opacity: 0.7; }
+  50%     { transform: scale(1.2); opacity: 0.15; }
+}
+
+@keyframes bubbleIn {
+  from { transform: scale(0.4) translateY(10px); opacity: 0; }
+  to   { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+@keyframes dotPop {
+  from { transform: scale(0); }
+  to   { transform: scale(1); }
+}
+
+@keyframes typingDot {
+  0%,80%,100% { transform: translateY(0); opacity: 0.35; }
+  40%          { transform: translateY(-7px); opacity: 1; }
+}
+
+@keyframes micPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,61,154,0.5); }
+  50%     { box-shadow: 0 0 0 8px rgba(255,61,154,0); }
+}
+
+/* ── Mobile ───────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .buddy-wrap    { right: 8px; bottom: 88px; }
+  .buddy-bubble  { max-width: 196px; font-size: 0.78rem; }
+  .buddy-body    { width: 60px; }
+  .buddy-avatar  { width: 56px; height: 56px; }
+  .buddy-arm     { width: 32px; height: 32px; }
+  .buddy-arm.left  { left: -20px; }
+  .buddy-arm.right { right: -20px; }
+}

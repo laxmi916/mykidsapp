@@ -1,0 +1,322 @@
+
+-- ==========================
+-- Tables & Constraints
+-- ==========================
+
+-- DEPARTMENT
+CREATE TABLE department (
+  dname           VARCHAR2(15)   NOT NULL,
+  dnumber         NUMBER(10)     NOT NULL,
+  mgr_ssn         CHAR(9)        NOT NULL,
+  mgr_start_date  DATE,
+  CONSTRAINT pk_department PRIMARY KEY (dnumber),
+  CONSTRAINT uq_department_dname UNIQUE (dname)
+);
+
+-- EMPLOYEE
+CREATE TABLE employee (
+  fname       VARCHAR2(15)   NOT NULL,
+  mname       CHAR(1),
+  lname       VARCHAR2(15)   NOT NULL,
+  ssn         CHAR(9)        NOT NULL,
+  bdate       DATE,
+  address     VARCHAR2(30),
+  sex         CHAR(1),
+  salary      NUMBER(10,2),
+  super_ssn   CHAR(9),
+  dno         NUMBER(10)     NOT NULL,
+  CONSTRAINT pk_employee PRIMARY KEY (ssn),
+  CONSTRAINT fk_employee_super
+    FOREIGN KEY (super_ssn) REFERENCES employee(ssn),
+  CONSTRAINT fk_employee_dept
+    FOREIGN KEY (dno)       REFERENCES department(dnumber)
+);
+
+-- Add the manager FK after EMPLOYEE exists (circular relationship)
+ALTER TABLE department
+  ADD CONSTRAINT fk_department_mgr
+  FOREIGN KEY (mgr_ssn) REFERENCES employee(ssn);
+
+-- DEPT_LOCATIONS
+CREATE TABLE dept_locations (
+  dnumber    NUMBER(10)   NOT NULL,
+  dlocation  VARCHAR2(15) NOT NULL,
+  CONSTRAINT pk_dept_locations PRIMARY KEY (dnumber, dlocation),
+  CONSTRAINT fk_deptloc_dept
+    FOREIGN KEY (dnumber) REFERENCES department(dnumber)
+);
+
+-- PROJECT
+CREATE TABLE project (
+  pname      VARCHAR2(15)  NOT NULL,
+  pnumber    NUMBER(10)    NOT NULL,
+  plocation  VARCHAR2(15),
+  dnum       NUMBER(10)    NOT NULL,
+  CONSTRAINT pk_project PRIMARY KEY (pnumber),
+  CONSTRAINT uq_project_pname UNIQUE (pname),
+  CONSTRAINT fk_project_dept
+    FOREIGN KEY (dnum) REFERENCES department(dnumber)
+);
+
+-- WORKS_ON
+CREATE TABLE works_on (
+  essn   CHAR(9)       NOT NULL,
+  pno    NUMBER(10)    NOT NULL,
+  hours  NUMBER(3,1)   NOT NULL,
+  CONSTRAINT pk_works_on PRIMARY KEY (essn, pno),
+  CONSTRAINT fk_works_on_emp  FOREIGN KEY (essn) REFERENCES employee(ssn),
+  CONSTRAINT fk_works_on_proj FOREIGN KEY (pno)  REFERENCES project(pnumber)
+);
+
+-- DEPENDENT
+CREATE TABLE dependent (
+  essn            CHAR(9)       NOT NULL,
+  dependent_name  VARCHAR2(15)  NOT NULL,
+  sex             CHAR(1),
+  bdate           DATE,
+  relationship    VARCHAR2(8),
+  CONSTRAINT pk_dependent PRIMARY KEY (essn, dependent_name),
+  CONSTRAINT fk_dependent_emp FOREIGN KEY (essn) REFERENCES employee(ssn)
+);
+
+-- Your script later allows department.mgr_ssn to be NULL; apply that:
+ALTER TABLE department MODIFY (mgr_ssn NULL);
+
+-- Sample data (departments only, as in your example)
+INSERT ALL
+  INTO department (dname, dnumber) VALUES ('Research',       5)
+  INTO department (dname, dnumber) VALUES ('Administration', 4)
+  INTO department (dname, dnumber) VALUES ('Headquarters',   1)
+SELECT * FROM dual;
+
+
+-- Top-level manager (no supervisor)
+INSERT INTO employee(fname, mname, lname, ssn, bdate, address, sex, salary, super_ssn, dno)
+VALUES ('James','E','Borg','888665555', TO_DATE('10-NOV-1937','DD-MON-YYYY'),
+        '450 Stone, Houston,TX','M',55000, NULL, 1);
+
+-- Direct reports to James Borg
+INSERT INTO employee(fname, mname, lname, ssn, bdate, address, sex, salary, super_ssn, dno)
+VALUES ('Jennifer','S','Wallace','987654321', TO_DATE('20-JUN-1941','DD-MON-YYYY'),
+        '291 Berry, Bellaire,TX','F',43000,'888665555', 4);
+
+INSERT INTO employee(fname, mname, lname, ssn, bdate, address, sex, salary, super_ssn, dno)
+VALUES ('Franklin','T','Wong','333445555', TO_DATE('08-DEC-1955','DD-MON-YYYY'),
+        '638 Voss, Houston,TX','F',40000,'888665555', 5);
+
+-- Subordinates under Franklin Wong
+INSERT INTO employee(fname, mname, lname, ssn, bdate, address, sex, salary, super_ssn, dno)
+VALUES ('John','B','Smith','123456789', TO_DATE('09-JAN-1965','DD-MON-YYYY'),
+        '731 Fondren, Houston,TX','M',30000,'333445555', 5);
+
+INSERT INTO employee(fname, mname, lname, ssn, bdate, address, sex, salary, super_ssn, dno)
+VALUES ('Ramesh','K','Narayan','666884444', TO_DATE('15-SEP-1962','DD-MON-YYYY'),
+        '975 Fire Oak, Humble,TX','M',38000,'333445555', 5);
+
+INSERT INTO employee(fname, mname, lname, ssn, bdate, address, sex, salary, super_ssn, dno)
+VALUES ('Joyce','A','English','453453453', TO_DATE('31-JUL-1972','DD-MON-YYYY'),
+        '5631 Rice, Houston,TX','F',25000,'333445555', 5);
+
+-- Subordinate under Jennifer Wallace
+INSERT INTO employee(fname, mname, lname, ssn, bdate, address, sex, salary, super_ssn, dno)
+VALUES ('Alicia','J','Zelaya','999887777', TO_DATE('19-JAN-1968','DD-MON-YYYY'),
+        '3321 Castle, Spring,TX','F',25000,'987654321', 4);
+
+INSERT INTO employee(fname, mname, lname, ssn, bdate, address, sex, salary, super_ssn, dno)
+VALUES ('Ahmad','V','Jabbar','987987987', TO_DATE('29-MAR-1969','DD-MON-YYYY'),
+        '980 Dallas, Houston,TX','M',25000,'987654321', 4);
+		
+update department set mgr_ssn='333445555', mgr_start_date='22-may-88' where dnumber=5; update department set mgr_ssn='987654321', mgr_start_date='01-jan-95' where dnumber=4; update department set mgr_ssn='888665555', mgr_start_date='19-jun-81' where dnumber=1; 
+
+alter table department modify mgr_ssn char(9) not null; 
+insert all into dept_locations values(1,'Houston') into dept_locations values(4,'Stafford') into dept_locations values(5,'Bellaire') into dept_locations values(5,'Sugarland') into dept_locations values(5,'Houston') select * from dual; 
+
+insert all into project values('ProductX',1,'Bellaire',5) into project values('ProductY',2,'Sugarland',5) into project values('ProductZ',3,'Houston',5) into project values('Computarization',10,'Stafford',4) into project values('Reorganization',20,'Houston',1) into project values('Newbenefits',30,'Stafford',4) select * from dual; 
+
+insert all into dependent values('333445555','Allice','F','05-apr-86','Daughter') into dependent values('333445555','Theodore','M','25-oct-83','Son') into dependent values('333445555','Joy','F','03-may-58','Spouse') into dependent values('987654321','Abner','M','28-feb-42','Spouse') into dependent values('123456789','Michael','M','04-jan-88','Son') into dependent values('123456789','Allice','F','30-dec-88','Daughter') into dependent values('123456789','Elizabeth','F','05-may-67','Spouse') select * from dual; 
+
+
+alter table works_on modify hours number(3,1) null;	
+		
+		
+INSERT ALL
+  INTO works_on VALUES('123456789',  1,  32.5)
+  INTO works_on VALUES('123456789',  2,   7.5)
+  INTO works_on VALUES('666884444',  3,  40.0)
+  INTO works_on VALUES('453453453',  1,  20.0)
+  INTO works_on VALUES('453453453',  2,  20.0)
+  INTO works_on VALUES('333445555',  2,  10.0)
+  INTO works_on VALUES('333445555',  3,  10.0)
+  INTO works_on VALUES('333445555', 10,  10.0)
+  INTO works_on VALUES('333445555', 20,  10.0)
+  INTO works_on VALUES('999887777', 30,  30.0)
+  INTO works_on VALUES('999887777', 10,  10.0)
+  INTO works_on VALUES('987987987', 10,  35.0)
+  INTO works_on VALUES('987987987', 30,   5.0)
+  INTO works_on VALUES('987654321', 30,  20.0)
+  INTO works_on VALUES('987654321', 20,  15.0)
+  INTO works_on VALUES('888665555', 20,  NULL)
+SELECT * FROM dual;
+
+COMMIT;
+
+//VIEW
+
+CREATE OR REPLACE VIEW v1 AS
+SELECT *
+FROM employee
+WHERE dno = 5;
+
+SELECT * FROM v1;
+
+//mysql
+CREATE OR REPLACE VIEW v1 AS
+SELECT *
+FROM employee
+WHERE dno = 5;
+
+
+CREATE VIEW emp_view AS
+SELECT fname || ' ' || mname || ' ' || lname AS full_name,
+       ssn,
+       salary,
+       dno
+FROM employee;
+
+
+SELECT * FROM emp_view;
+
+//mysql
+CREATE VIEW emp_view AS
+SELECT CONCAT(fname, ' ', mname, ' ', lname) AS full_name,
+       ssn,
+       salary,
+       dno
+FROM employee;
+
+SELECT * FROM emp_view;
+
+//complex view
+create or replace view v2 as select fname, salary, dname from employee, department where dno = dnumber;
+
+SELECT * FROM emp_v2;
+
+
+
+//Procedure
+
+CREATE OR REPLACE PROCEDURE get_employee_by_id AS
+    v_fname employee.fname%TYPE;
+    v_dno   employee.dno%TYPE;
+BEGIN
+   SELECT fname, dno
+   INTO   v_fname, v_dno
+   FROM   employee
+   WHERE  ssn = '888665555';
+   
+   DBMS_OUTPUT.PUT_LINE('Name: ' || v_fname || ', Dept: ' || v_dno);
+END;
+/
+
+SET SERVEROUTPUT ON;
+EXEC get_employee_by_id;
+
+
+
+
+CREATE OR REPLACE PROCEDURE get_employee_by_id (
+    p_fname OUT VARCHAR2,
+    p_dno OUT NUMBER
+) AS
+BEGIN
+   SELECT fname, dno
+   INTO   p_fname, p_dno
+   FROM   employee
+   WHERE  ssn = '888665555';
+   
+   DBMS_OUTPUT.PUT_LINE('Name: ' || p_fname || ', Dept: ' || p_dno);
+END;
+/
+
+===================================================
+Mysql procedures
+===================================================
+
+delimiter //
+CREATE OR REPLACE PROCEDURE get_employee_by_id ()
+BEGIN
+   SELECT *
+   FROM   employee
+   WHERE  ssn = '888665555';
+END;
+//
+
+call get_employee_by_id ();
+
+
+
+mysql> DELIMITER //
+
+mysql>CREATE PROCEDURE get_employee_by_id()
+     ->BEGIN
+    ->SELECT * FROM employee WHERE ssn = '888665555';
+    ->END;
+    ->//
+
+mysql ->CALL get_employee_by_id(); //
+
+
+
+mysql> DELIMITER //
+
+mysql>CREATE PROCEDURE get_employee_by_id2(IN p_ssn CHAR(9))
+     ->BEGIN
+    ->SELECT * FROM employee WHERE ssn = p_ssn;
+    ->END;
+    ->//
+
+mysql ->CALL get_employee_by_id2('888665555'); //
+
+
+DELIMITER //
+
+CREATE PROCEDURE get_employee_by_id5(
+OUT p_fname VARCHAR(50), 
+OUT p_dno INT)
+BEGIN
+   SELECT fname, dno
+   INTO   p_fname, p_dno
+   FROM   employee
+   WHERE  ssn = '888665555';
+END;
+//
+
+CALL get_employee_by_id5(@name, @dept); //
+SELECT @name AS Name, @dept AS Dept; //
+++++++++++++++++++++++++++++++++++++++++++++++++
+DELIMITER //
+
+CREATE PROCEDURE get_employee_by_id(
+    IN p_ssn CHAR(9),
+    OUT p_fname VARCHAR(50),
+    OUT p_dno INT
+)
+BEGIN
+   SELECT fname, dno
+   INTO   p_fname, p_dno
+   FROM   employee
+   WHERE  ssn = p_ssn;
+END;
+//
+
+CALL get_employee_by_id('888665555', @name, @dept); //
+SELECT @name AS Name, @dept AS Dept; //
+
+
+
+
+
+
+
+
+
