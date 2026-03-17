@@ -229,7 +229,15 @@ export default function MathPage() {
               className="input"
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
-              style={{ fontWeight: 800 }}
+              style={{
+                fontWeight: 800,
+                fontSize: "16px",
+                minHeight: 52,
+                WebkitAppearance: "menulist",
+                appearance: "auto",
+                position: "relative",
+                zIndex: 2,
+              }}
             >
               {TOPICS.map((item) => (
                 <option key={item.v} value={item.v}>

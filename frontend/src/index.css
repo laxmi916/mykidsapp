@@ -327,6 +327,11 @@ body {
 .input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
 
 select.input option { background: var(--c-raised); }
+select.input {
+  -webkit-appearance: menulist;
+  appearance: auto;
+  touch-action: manipulation;
+}
 
 /* ═══════════════════════════════════════════════
    NAVIGATION
