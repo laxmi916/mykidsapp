@@ -558,12 +558,48 @@ Return STRICT JSON only, no markdown, no extra text:
 
   try {
     const result = await model.generateContent(prompt);
-    let text     = result.response.text().replace(/```json|```/g, "").trim();
+    const text = result.response.text().replace(/```json|```/g, "").trim();
     const parsed = JSON.parse(text);
+    if (!parsed?.questions?.length) throw new Error("No questions returned");
     res.json(parsed);
   } catch (err) {
-    console.error("❌ Story quiz error:", err);
-    res.status(500).json({ error: err.message });
+    console.error("Story quiz error:", err);
+
+    const sentences = story
+      .split(/(?<=[.!?])\s+/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    const first = sentences[0] || story.slice(0, 120).trim();
+    const last = sentences[sentences.length - 1] || first;
+    const middle = sentences[Math.floor(sentences.length / 2)] || first;
+
+    const fallback = {
+      questions: [
+        {
+          question: "What is this story mostly about?",
+          options: [first.slice(0, 40), middle.slice(0, 40), last.slice(0, 40), "A completely different event"],
+          answer: first.slice(0, 40),
+        },
+        {
+          question: "Which sentence appears in the story?",
+          options: [first, "The child flew to the moon.", "A giant storm destroyed the city.", "A robot taught maths in space."],
+          answer: first,
+        },
+        {
+          question: "What happened near the middle of the story?",
+          options: [middle, "Nothing happened.", "Everyone went home before the story began.", "The characters disappeared forever."],
+          answer: middle,
+        },
+        {
+          question: "How does the story end?",
+          options: [last, "The story never ends.", "A spaceship lands in the jungle.", "All the characters forget everything."],
+          answer: last,
+        },
+      ],
+    };
+
+    res.json(fallback);
   }
 });
 
