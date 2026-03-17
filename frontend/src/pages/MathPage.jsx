@@ -54,6 +54,7 @@ export default function MathPage() {
   const [loading, setLoading] = useState(false);
   const [confetti, setConfetti] = useState(false);
   const [error, setError] = useState("");
+  const [showSkills, setShowSkills] = useState(false);
 
   const currentTopic = TOPICS.find((item) => item.v === topic) || TOPICS[0];
   const skillStats = mathSkills || {};
@@ -219,78 +220,81 @@ export default function MathPage() {
       )}
 
       <div className="card card-raised" style={{ padding: 16, marginBottom: 16 }}>
-        <div style={{ fontWeight: 900, marginBottom: 10, color: currentTopic.c }}>
-          Math Skill Analysis
-        </div>
-
-        <div style={{ display: "grid", gap: 8 }}>
-          {skillSummary.map((item) => (
-            <div
-              key={item.v}
-              style={{
-                display: "grid",
-                gridTemplateColumns: "130px 1fr auto",
-                gap: 10,
-                alignItems: "center",
-              }}
+        <div style={{ display: "grid", gap: 12 }}>
+          <div>
+            <label style={{ display: "block", fontWeight: 900, marginBottom: 8, color: currentTopic.c }}>
+              Select Topic
+            </label>
+            <select
+              className="input"
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+              style={{ fontWeight: 800 }}
             >
-              <span style={{ fontSize: ".82rem", fontWeight: 800 }}>{item.l}</span>
-              <div
-                style={{
-                  height: 10,
-                  borderRadius: 999,
-                  background: "rgba(255,255,255,0.08)",
-                  overflow: "hidden",
-                }}
-              >
-                <div
-                  style={{
-                    width: `${item.percent}%`,
-                    height: "100%",
-                    borderRadius: 999,
-                    background: `linear-gradient(90deg, ${item.c}, #FFD60A)`,
-                  }}
-                />
-              </div>
-              <span style={{ fontSize: ".8rem", fontWeight: 800, color: item.c }}>
-                {item.total ? `${item.percent}%` : "--"}
-              </span>
-            </div>
-          ))}
+              {TOPICS.map((item) => (
+                <option key={item.v} value={item.v}>
+                  {item.l}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <button
+              className="btn btn-outline btn-full"
+              onClick={() => setShowSkills((prev) => !prev)}
+              type="button"
+            >
+              {showSkills ? "Hide Math Skills Analysis" : "Show Math Skills Analysis"}
+            </button>
+          </div>
         </div>
 
-        <p className="text-muted" style={{ fontSize: ".82rem", marginTop: 12, marginBottom: 0 }}>
-          {weakSkills.length
-            ? `Needs practice: ${weakSkills.map((item) => item.l).join(", ")}`
-            : "No weak skill found yet. Start solving to build your topic analysis."}
-        </p>
-      </div>
+        {showSkills && (
+          <>
+            <div style={{ display: "grid", gap: 8, marginTop: 14 }}>
+              {skillSummary.map((item) => (
+                <div
+                  key={item.v}
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "130px 1fr auto",
+                    gap: 10,
+                    alignItems: "center",
+                  }}
+                >
+                  <span style={{ fontSize: ".82rem", fontWeight: 800 }}>{item.l}</span>
+                  <div
+                    style={{
+                      height: 10,
+                      borderRadius: 999,
+                      background: "rgba(255,255,255,0.08)",
+                      overflow: "hidden",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: `${item.percent}%`,
+                        height: "100%",
+                        borderRadius: 999,
+                        background: `linear-gradient(90deg, ${item.c}, #FFD60A)`,
+                      }}
+                    />
+                  </div>
+                  <span style={{ fontSize: ".8rem", fontWeight: 800, color: item.c }}>
+                    {item.total ? `${item.percent}%` : "--"}
+                  </span>
+                </div>
+              ))}
+            </div>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
-          gap: 12,
-          marginBottom: 16,
-        }}
-      >
-        {TOPICS.map((item) => (
-          <button
-            key={item.v}
-            onClick={() => setTopic(item.v)}
-            className="card"
-            style={{
-              padding: "14px 12px",
-              border: `2px solid ${topic === item.v ? item.c : "var(--c-border2)"}`,
-              background: topic === item.v ? `${item.c}18` : "var(--c-raised)",
-              fontWeight: 800,
-              color: "var(--c-text)",
-            }}
-          >
-            <span style={{ fontSize: "1.1rem", display: "block", marginBottom: 4 }}>{item.sym}</span>
-            <span style={{ fontSize: ".86rem" }}>{item.l}</span>
-          </button>
-        ))}
+            <p className="text-muted" style={{ fontSize: ".82rem", marginTop: 12, marginBottom: 0 }}>
+              {weakSkills.length
+                ? `Needs practice: ${weakSkills.map((item) => item.l).join(", ")}`
+                : "No weak skill found yet. Start solving to build your topic analysis."}
+            </p>
+          </>
+        )}
       </div>
 
       <div className="text-center" style={{ marginBottom: 20 }}>

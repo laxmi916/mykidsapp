@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KidsApp Hosting Guide</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+      color: #222;
+    }
+    h1, h2, h3 { color: #0f4c81; }
+    code, pre {
+      background: #f4f4f4;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    pre {
+      padding: 12px;
+      overflow-x: auto;
+    }
+    .box {
+      border: 1px solid #ddd;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      background: #fafafa;
+    }
+    ul, ol { margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <h1>KidsApp Hosting Guide</h1>
+  <p>This guide explains how to host your <strong>backend</strong> and <strong>frontend</strong> from GitHub to Render.</p>
+
+  <div class="box">
+    <h2>1. Project Structure</h2>
+    <pre><code>kidsapp/
+  backend/
+    server.js
+    package.json
+    .env
+    routes/
+  frontend/
+    package.json
+    vite.config.js
+    src/</code></pre>
+    <p>Your GitHub repo root should be the <code>kidsapp</code> folder.</p>
+  </div>
+
+  <div class="box">
+    <h2>2. Push Project to GitHub</h2>
+    <ol>
+      <li>Open terminal inside <code>e:\kidsapp6\kidsapp</code></li>
+      <li>Run these commands:</li>
+    </ol>
+    <pre><code>git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/yourname/kidsapp.git
+git push -u origin main</code></pre>
+  </div>
+
+  <div class="box">
+    <h2>3. Backend Hosting on Render</h2>
+    <ol>
+      <li>Go to <a href="https://dashboard.render.com/" target="_blank">Render Dashboard</a></li>
+      <li>Click <code>New +</code></li>
+      <li>Select <code>Web Service</code></li>
+      <li>Connect GitHub and choose the same repo</li>
+    </ol>
+
+    <h3>Backend Settings</h3>
+    <ul>
+      <li><strong>Name:</strong> <code>kidsapp-backend</code></li>
+      <li><strong>Root Directory:</strong> <code>backend</code></li>
+      <li><strong>Environment:</strong> <code>Node</code></li>
+      <li><strong>Build Command:</strong> <code>npm install</code></li>
+      <li><strong>Start Command:</strong> <code>node server.js</code></li>
+    </ul>
+
+    <h3>Backend Environment Variables</h3>
+    <pre><code>GEMINI_API_KEY=your_key_here
+APP_PASSWORD=your_app_password
+JWT_SECRET=your_secret_here</code></pre>
+
+    <p>After deployment, Render gives a backend URL like:</p>
+    <pre><code>https://mykidsapp.onrender.com</code></pre>
+  </div>
+
+  <div class="box">
+    <h2>4. Frontend Hosting on Render</h2>
+    <ol>
+      <li>Go to <a href="https://dashboard.render.com/" target="_blank">Render Dashboard</a></li>
+      <li>Click <code>New +</code></li>
+      <li>Select <code>Static Site</code></li>
+      <li>Select the <strong>same GitHub repo</strong></li>
+    </ol>
+
+    <h3>Frontend Settings</h3>
+    <ul>
+      <li><strong>Name:</strong> <code>kidsapp-frontend</code></li>
+      <li><strong>Root Directory:</strong> <code>frontend</code></li>
+      <li><strong>Build Command:</strong> <code>npm install && npm run build</code></li>
+      <li><strong>Publish Directory:</strong> <code>dist</code></li>
+    </ul>
+
+    <h3>Frontend Environment Variable</h3>
+    <pre><code>VITE_API_BASE_URL=https://mykidsapp.onrender.com</code></pre>
+
+    <p>This connects your frontend to the backend hosted on Render.</p>
+  </div>
+
+  <div class="box">
+    <h2>5. Important Notes</h2>
+    <ul>
+      <li>Both frontend and backend use the <strong>same GitHub repo</strong>.</li>
+      <li>Backend uses <code>Root Directory = backend</code>.</li>
+      <li>Frontend uses <code>Root Directory = frontend</code>.</li>
+      <li><code>localStorage</code> data is stored in the browser, not on Render.</li>
+      <li>Do not push <code>backend/.env</code> to GitHub.</li>
+    </ul>
+  </div>
+
+  <div class="box">
+    <h2>6. Example .gitignore</h2>
+    <pre><code>node_modules/
+backend/.env
+backend/node_modules/
+frontend/node_modules/
+frontend/dist/</code></pre>
+  </div>
+
+  <div class="box">
+    <h2>7. Final Flow</h2>
+    <ol>
+      <li>Push code to GitHub</li>
+      <li>Deploy backend on Render as Web Service</li>
+      <li>Copy backend URL</li>
+      <li>Deploy frontend on Render as Static Site</li>
+      <li>Set <code>VITE_API_BASE_URL</code> to backend URL</li>
+      <li>Open frontend Render URL and test the app</li>
+    </ol>
+  </div>
+</body>
+</html>

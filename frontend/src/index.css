@@ -948,6 +948,31 @@ select.input option { background: var(--c-raised); }
 /* ═══════════════════════════════════════════════
    RESPONSIVE
 ═══════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .page { padding: 20px 14px 96px; }
+  .page-title { font-size: 2rem; }
+  .section-title { font-size: 1.65rem; }
+  .grid-auto { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+  .nav-inner { max-width: 100%; }
+}
+
+@media (max-width: 768px) {
+  .grid-2,
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .page-title { font-size: 1.85rem; }
+  .section-title { font-size: 1.5rem; }
+  .btn-lg { padding: 14px 24px; font-size: 1rem; }
+  .dash-hero,
+  .xp-header,
+  .badges-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
 @media (max-width: 480px) {
   .page { padding: 16px 12px 90px; }
   .page-title { font-size: 1.8rem; }
