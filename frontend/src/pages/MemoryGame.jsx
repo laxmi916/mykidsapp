@@ -189,8 +189,6 @@ export default function MemoryGame() {
   const isMatch  = uid => matched.has(uid);
   const isWrong  = uid => wrongPair.includes(uid);
 
-  // Grid columns: 4 pairs = 4 cols, 6+ = 4 cols, 10 = 5 cols on wide
-  const cols = pairCount <= 4 ? 4 : pairCount <= 6 ? 4 : pairCount <= 8 ? 4 : 5;
   const activeTheme = THEMES.find(t => t.v === theme) || THEMES[0];
 
   return (
@@ -295,7 +293,7 @@ export default function MemoryGame() {
       {/* Card Grid */}
       {cards.length > 0 && !loading && (
         <div className="mem-grid-wrap">
-          <div className="mem-grid" style={{ "--mem-cols": cols }}>
+          <div className="mem-grid">
             {cards.map(card => {
               const up  = isFaceUp(card.uid);
               const ok  = isMatch(card.uid);

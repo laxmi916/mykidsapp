@@ -678,13 +678,14 @@ select.input {
 
 /* Card grid */
 .mem-grid-wrap {
-  overflow: hidden;
+  overflow: visible;
 }
 .mem-grid {
   display: grid;
-  grid-template-columns: repeat(var(--mem-cols, 4), minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 12px;
   margin-bottom: 20px;
+  align-items: stretch;
 }
 
 .mem-card-wrap {
@@ -960,7 +961,7 @@ select.input {
   .section-title { font-size: 1.65rem; }
   .grid-auto { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
   .nav-inner { max-width: 100%; }
-  .mem-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+  .mem-grid { grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)) !important; }
 }
 
 @media (max-width: 768px) {
@@ -978,16 +979,17 @@ select.input {
     flex-direction: column;
     align-items: stretch;
   }
-  .mem-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 10px; }
+  .mem-grid { grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)) !important; gap: 10px; }
   .mem-face-emoji { font-size: 2.5rem; }
   .mem-back-icon { font-size: 2rem; }
+  .mem-face-word { font-size: 0.72rem; }
 }
 
 @media (max-width: 480px) {
   .page { padding: 16px 12px 90px; }
   .page-title { font-size: 1.8rem; }
   .mem-grid { gap: 8px; }
-  .mem-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .mem-grid { grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)) !important; }
   .feat-card .feat-emoji { font-size: 2.2rem; }
   .nav-btn { padding: 8px 8px 5px; min-width: 44px; font-size: 0.58rem; }
   .nav-btn .nav-emoji { font-size: 1.35rem; }
